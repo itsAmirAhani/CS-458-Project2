@@ -19,7 +19,7 @@ CS-458-Project2/
 #### **Setup**
 1. **Navigate to the project folder**:
    ```bash
-   cd CS-458-Project2
+   cd CS-458-Project2/backend
    ```
 2. **Create & activate a virtual environment**:
    ```bash
@@ -29,12 +29,15 @@ CS-458-Project2/
    ```
 3. **Install dependencies**:
    ```bash
-   pip install fastapi uvicorn
+   pip install fastapi uvicorn httpx
    ```
-
+   1. **(Important)**:
+      ```bash 
+      pip install "pydantic<2.0" 
+      ```
 #### **Run the FastAPI Server**
 ```bash
-uvicorn backend.main:app --reload
+uvicorn app.main:app --reload
 ```
 - The FastAPI server will run at **http://127.0.0.1:8000**.
 - Open **http://127.0.0.1:8000/docs** to view the API documentation.
