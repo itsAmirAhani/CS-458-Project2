@@ -37,10 +37,10 @@ CS-458-Project2/
       ```
 #### **Run the FastAPI Server**
 ```bash
-uvicorn app.main:app --reload
+python -m uvicorn app.main:app --host 0.0.0.0 --reload
 ```
-- The FastAPI server will run at **http://127.0.0.1:8000**.
-- Open **http://127.0.0.1:8000/docs** to view the API documentation.
+- The FastAPI server will run at **http://0.0.0.0:8000**.
+- Open **http://localhost:8000/docs** to view the API documentation.
 
 ---
 ### **2️⃣ Mobile App (Flutter)**
