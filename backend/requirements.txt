@@ -1,0 +1,4 @@
+fastapi==0.111.0  # Newer version that supports Pydantic 2.x
+pydantic==2.7.0
+fastapi-mail==1.4.1
+uvicorn==0.22.0
