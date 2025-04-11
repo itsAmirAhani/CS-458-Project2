@@ -193,6 +193,7 @@ class _SurveyPageState extends State<SurveyPage> {
                   controller: _nameSurnameController,
                   decoration: InputDecoration(labelText: "Name & Surname"),
                   validator: (value) => value!.isEmpty ? "Required" : null,
+                  key: Key('name_surname_field'),
                 ),
                 SizedBox(height: 16),
                 GestureDetector(
@@ -204,6 +205,7 @@ class _SurveyPageState extends State<SurveyPage> {
                           ? "Select date"
                           : DateFormat('yyyy-MM-dd').format(_birthDate!),
                     ),
+                    key: Key('birth_date_field'),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -225,6 +227,7 @@ class _SurveyPageState extends State<SurveyPage> {
                   validator:
                       (value) =>
                           value == null || value.isEmpty ? "Required" : null,
+                  key: Key('education_level_field'),
                 ),
 
                 SizedBox(height: 16),
@@ -232,6 +235,7 @@ class _SurveyPageState extends State<SurveyPage> {
                   controller: _cityController,
                   decoration: InputDecoration(labelText: "City"),
                   validator: (value) => value!.isEmpty ? "Required" : null,
+                  key: Key('city_field'),
                 ),
                 SizedBox(height: 16),
                 Text("Gender", style: TextStyle(fontSize: 16)),
@@ -241,12 +245,14 @@ class _SurveyPageState extends State<SurveyPage> {
                       value: "male",
                       groupValue: _gender,
                       onChanged: (value) => setState(() => _gender = value),
+                      key: Key('gender_male'),
                     ),
                     Text("Male"),
                     Radio<String>(
                       value: "female",
                       groupValue: _gender,
                       onChanged: (value) => setState(() => _gender = value),
+                      key: Key('gender_female'),
                     ),
                     Text("Female"),
                   ],
@@ -273,6 +279,7 @@ class _SurveyPageState extends State<SurveyPage> {
                           },
                         );
                       }).toList(),
+                      key: Key('ai_models_field')
                 ),
 
                 SizedBox(height: 16),
@@ -326,6 +333,7 @@ class _SurveyPageState extends State<SurveyPage> {
                     setState(() {}); // trigger rebuild to update helperText
                   },
                   validator: (value) => value!.isEmpty ? "Required" : null,
+                  key: Key('beneficial_use_field'), // Add this
                 ),
                 SizedBox(height: 16),
                 TextFormField(
@@ -337,6 +345,7 @@ class _SurveyPageState extends State<SurveyPage> {
                           value!.isEmpty || !value.contains('@') || !value.contains('.')
                               ? "Valid email required"
                               : null,
+                  key: Key('email_field'),
                 ),
                 SizedBox(height: 20),
                 _isLoading
@@ -349,6 +358,7 @@ class _SurveyPageState extends State<SurveyPage> {
                         backgroundColor: Colors.blue, // Added for consistency
                       ),
                       child: Text("Submit Survey"),
+                      key: Key('submit_button'),
                     ),
               ],
             ),

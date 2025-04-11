@@ -107,6 +107,7 @@ class _NormalLoginState extends State<NormalLogin> {
                 borderSide: BorderSide(color: Colors.grey, width: 1.0),
               ),
             ),
+            key: Key('email_field'),
           ),
           SizedBox(height: 16),
           TextField(
@@ -122,6 +123,7 @@ class _NormalLoginState extends State<NormalLogin> {
               ),
             ),
             obscureText: true,
+            key: Key('password_field'),
           ),
           SizedBox(height: 20),
           ElevatedButton(
@@ -132,7 +134,8 @@ class _NormalLoginState extends State<NormalLogin> {
                       await handleSubmit(); // Call handleSubmit directly
                     },
             style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 16.0), backgroundColor: Colors.blue,
+              padding: EdgeInsets.symmetric(vertical: 16.0),
+              backgroundColor: Colors.blue,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ), // Button color
@@ -141,6 +144,7 @@ class _NormalLoginState extends State<NormalLogin> {
               widget.loading ? "Logging in..." : "Login",
               style: TextStyle(fontSize: 16),
             ),
+            key: Key('login_button'),
           ),
         ],
       ),
