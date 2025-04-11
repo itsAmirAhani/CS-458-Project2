@@ -48,11 +48,40 @@ class _SurveyPageState extends State<SurveyPage> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: DateTime.now().subtract(
+        Duration(days: 365 * 20),
+      ), // default age: ~20
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
-    if (picked != null && picked != _birthDate) {
+    if (picked != null) {
+      final today = DateTime.now();
+      final age =
+          today.year -
+          picked.year -
+          ((today.month < picked.month ||
+                  (today.month == picked.month && today.day < picked.day))
+              ? 1
+              : 0);
+
+      if (age > 120) {
+        Fluttertoast.showToast(
+          msg: "Age exceeds valid range (120 years max).",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+        return;
+      }
+
+      if (age < 6) {
+        Fluttertoast.showToast(
+          msg: "You must be at least 6 years old to participate.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+        return;
+      }
+
       setState(() {
         _birthDate = picked;
       });
