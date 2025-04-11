@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'pages/login_page.dart'; // Import the LoginPage
-import 'pages/success_page.dart'; // Import the SuccessPage
+import 'pages/survey_page.dart'; // Import the SurveyPage
 
 void main() {
   runApp(MyApp());
@@ -16,10 +16,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(primarySwatch: Colors.blue),
       home: LoginPage(), // Set the LoginPage as the home
       routes: {
-        // Define routes for navigation
-        '/success': (context) => SuccessPage(),
+        '/survey': (context) => SurveyPage(), // Updated to SurveyPage
       },
     );
   }
 }
-
