@@ -17,15 +17,10 @@ class _SurveyPageState extends State<SurveyPage> {
 
   // Controllers for text fields
   final TextEditingController _nameSurnameController = TextEditingController();
-  final TextEditingController _educationLevelController =
-      TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _beneficialUseController =
       TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  //final TextEditingController _aiModelsController = TextEditingController();
-  final TextEditingController _defectKeyController = TextEditingController();
-  final TextEditingController _defectValueController = TextEditingController();
 
   // Form state
   DateTime? _birthDate;
@@ -60,17 +55,6 @@ class _SurveyPageState extends State<SurveyPage> {
     if (picked != null && picked != _birthDate) {
       setState(() {
         _birthDate = picked;
-      });
-    }
-  }
-
-  void _addDefect() {
-    if (_defectKeyController.text.isNotEmpty &&
-        _defectValueController.text.isNotEmpty) {
-      setState(() {
-        _defects[_defectKeyController.text] = _defectValueController.text;
-        _defectKeyController.clear();
-        _defectValueController.clear();
       });
     }
   }
