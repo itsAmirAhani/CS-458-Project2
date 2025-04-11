@@ -16,26 +16,18 @@ class _SurveyPageState extends State<SurveyPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
-  // Controllers for text fields
   final TextEditingController _nameSurnameController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _beneficialUseController =
       TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+
   final int _beneficialUseMaxLength = 150;
-  // Form state
+
   DateTime? _birthDate;
   String? _gender;
-  final List<String> _availableAIModels = [
-    'ChatGPT',
-    'Bard',
-    'Gemini',
-    'Claude',
-    'DeepSeek',
-  ];
-  final List<String> _selectedAIModels = [];
-  final Map<String, String> _defects = {};
-  String? _selectedEducationLevel; // Add this to state
+  String? _selectedEducationLevel;
+  bool _showSendButton = false;
 
   final List<String> _educationLevels = [
     'Primary School',
@@ -46,12 +38,48 @@ class _SurveyPageState extends State<SurveyPage> {
     'PhD',
   ];
 
+  final List<String> _availableAIModels = [
+    'ChatGPT',
+    'Bard',
+    'Gemini',
+    'Claude',
+    'DeepSeek',
+  ];
+  final List<String> _selectedAIModels = [];
+  final Map<String, String> _defects = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _nameSurnameController.addListener(_checkFieldsFilled);
+    _cityController.addListener(_checkFieldsFilled);
+    _beneficialUseController.addListener(_checkFieldsFilled);
+    _emailController.addListener(_checkFieldsFilled);
+  }
+
+  void _checkFieldsFilled() {
+    setState(() {
+      _showSendButton =
+          _nameSurnameController.text.isNotEmpty &&
+          _birthDate != null &&
+          _selectedEducationLevel != null &&
+          _cityController.text.isNotEmpty &&
+          _gender != null &&
+          _selectedAIModels.isNotEmpty &&
+          _selectedAIModels.every(
+            (model) => _defects[model]?.isNotEmpty ?? false,
+          ) &&
+          _beneficialUseController.text.isNotEmpty &&
+          _emailController.text.isNotEmpty &&
+          _emailController.text.contains('@') &&
+          _emailController.text.contains('.');
+    });
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now().subtract(
-        Duration(days: 365 * 20),
-      ), // default age: ~20
+      initialDate: DateTime.now().subtract(Duration(days: 365 * 20)),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
@@ -65,18 +93,12 @@ class _SurveyPageState extends State<SurveyPage> {
               ? 1
               : 0);
 
-      if (age > 120) {
+      if (age > 120 || age < 6) {
         Fluttertoast.showToast(
-          msg: "Age exceeds valid range (120 years max).",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-        );
-        return;
-      }
-
-      if (age < 6) {
-        Fluttertoast.showToast(
-          msg: "You must be at least 6 years old to participate.",
+          msg:
+              age > 120
+                  ? "Age exceeds valid range (120 years max)."
+                  : "You must be at least 6 years old to participate.",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
         );
@@ -86,23 +108,18 @@ class _SurveyPageState extends State<SurveyPage> {
       setState(() {
         _birthDate = picked;
       });
+      _checkFieldsFilled();
     }
   }
 
   Future<void> _submitSurvey() async {
-    // Validate form and required fields
     if (_formKey.currentState!.validate()) {
-      if (_birthDate == null) {
+      if (_birthDate == null || _gender == null) {
         Fluttertoast.showToast(
-          msg: "Please select a birth date",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-        );
-        return;
-      }
-      if (_gender == null) {
-        Fluttertoast.showToast(
-          msg: "Please select a gender",
+          msg:
+              _birthDate == null
+                  ? "Please select a birth date"
+                  : "Please select a gender",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
         );
@@ -114,7 +131,6 @@ class _SurveyPageState extends State<SurveyPage> {
       });
 
       try {
-        // Prepare the payload
         final payload = {
           'name_surname': _nameSurnameController.text,
           'birth_date': DateFormat('yyyy-MM-dd').format(_birthDate!),
@@ -127,19 +143,11 @@ class _SurveyPageState extends State<SurveyPage> {
           'email': _emailController.text,
         };
 
-        // Log the payload for debugging
-        print('Submitting survey: ${json.encode(payload)}');
-
-        // Send the request
         final response = await http.post(
           Uri.parse('$baseUrl/survey'),
           headers: {'Content-Type': 'application/json'},
           body: json.encode(payload),
         );
-
-        // Log the response
-        print('Response status: ${response.statusCode}');
-        print('Response body: ${response.body}');
 
         if (response.statusCode == 200) {
           Fluttertoast.showToast(
@@ -147,7 +155,7 @@ class _SurveyPageState extends State<SurveyPage> {
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
           );
-          Navigator.pop(context); // Go back to login page
+          Navigator.pop(context);
         } else {
           final error = json.decode(response.body)['detail'] ?? 'Unknown error';
           Fluttertoast.showToast(
@@ -157,7 +165,6 @@ class _SurveyPageState extends State<SurveyPage> {
           );
         }
       } catch (e) {
-        print('Submission error: $e');
         Fluttertoast.showToast(
           msg: "Error: $e",
           toastLength: Toast.LENGTH_LONG,
@@ -168,12 +175,6 @@ class _SurveyPageState extends State<SurveyPage> {
           _isLoading = false;
         });
       }
-    } else {
-      Fluttertoast.showToast(
-        msg: "Please fill all required fields correctly",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-      );
     }
   }
 
@@ -193,7 +194,6 @@ class _SurveyPageState extends State<SurveyPage> {
                   controller: _nameSurnameController,
                   decoration: InputDecoration(labelText: "Name & Surname"),
                   validator: (value) => value!.isEmpty ? "Required" : null,
-                  key: Key('name_surname_field'),
                 ),
                 SizedBox(height: 16),
                 GestureDetector(
@@ -205,37 +205,34 @@ class _SurveyPageState extends State<SurveyPage> {
                           ? "Select date"
                           : DateFormat('yyyy-MM-dd').format(_birthDate!),
                     ),
-                    key: Key('birth_date_field'),
                   ),
                 ),
                 SizedBox(height: 16),
                 DropdownButtonFormField<String>(
                   value: _selectedEducationLevel,
                   items:
-                      _educationLevels.map((level) {
-                        return DropdownMenuItem<String>(
-                          value: level,
-                          child: Text(level),
-                        );
-                      }).toList(),
+                      _educationLevels
+                          .map(
+                            (level) => DropdownMenuItem<String>(
+                              value: level,
+                              child: Text(level),
+                            ),
+                          )
+                          .toList(),
                   onChanged: (val) {
                     setState(() {
                       _selectedEducationLevel = val;
                     });
+                    _checkFieldsFilled();
                   },
                   decoration: InputDecoration(labelText: "Education Level"),
-                  validator:
-                      (value) =>
-                          value == null || value.isEmpty ? "Required" : null,
-                  key: Key('education_level_field'),
+                  validator: (value) => value == null ? "Required" : null,
                 ),
-
                 SizedBox(height: 16),
                 TextFormField(
                   controller: _cityController,
                   decoration: InputDecoration(labelText: "City"),
                   validator: (value) => value!.isEmpty ? "Required" : null,
-                  key: Key('city_field'),
                 ),
                 SizedBox(height: 16),
                 Text("Gender", style: TextStyle(fontSize: 16)),
@@ -244,15 +241,19 @@ class _SurveyPageState extends State<SurveyPage> {
                     Radio<String>(
                       value: "male",
                       groupValue: _gender,
-                      onChanged: (value) => setState(() => _gender = value),
-                      key: Key('gender_male'),
+                      onChanged: (value) {
+                        setState(() => _gender = value);
+                        _checkFieldsFilled();
+                      },
                     ),
                     Text("Male"),
                     Radio<String>(
                       value: "female",
                       groupValue: _gender,
-                      onChanged: (value) => setState(() => _gender = value),
-                      key: Key('gender_female'),
+                      onChanged: (value) {
+                        setState(() => _gender = value);
+                        _checkFieldsFilled();
+                      },
                     ),
                     Text("Female"),
                   ],
@@ -276,14 +277,12 @@ class _SurveyPageState extends State<SurveyPage> {
                                 _defects.remove(model);
                               }
                             });
+                            _checkFieldsFilled();
                           },
                         );
                       }).toList(),
-                      key: Key('ai_models_field')
                 ),
-
                 SizedBox(height: 16),
-                Text("Defects", style: TextStyle(fontSize: 16)),
                 if (_selectedAIModels.isNotEmpty)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -300,6 +299,7 @@ class _SurveyPageState extends State<SurveyPage> {
                                 setState(() {
                                   _defects[model] = val;
                                 });
+                                _checkFieldsFilled();
                               },
                               validator:
                                   (val) =>
@@ -310,13 +310,6 @@ class _SurveyPageState extends State<SurveyPage> {
                           );
                         }).toList(),
                   ),
-
-                SizedBox(height: 8),
-                Text(
-                  _defects.isEmpty
-                      ? "No defects added"
-                      : "Defects: ${_defects.entries.map((e) => '${e.key}: ${e.value}').join(', ')}",
-                ),
                 SizedBox(height: 16),
                 TextFormField(
                   controller: _beneficialUseController,
@@ -324,16 +317,15 @@ class _SurveyPageState extends State<SurveyPage> {
                     labelText: "Beneficial AI Use",
                     helperText:
                         "${_beneficialUseMaxLength - _beneficialUseController.text.length} characters remaining",
-                    counterText:
-                        "", // hides default Flutter counter at the bottom
+                    counterText: "",
                   ),
                   maxLength: _beneficialUseMaxLength,
-                  maxLines: null, // allow multiline
-                  onChanged: (_) {
-                    setState(() {}); // trigger rebuild to update helperText
-                  },
+                  maxLines: null,
+                  onChanged:
+                      (_) => setState(() {
+                        _checkFieldsFilled();
+                      }),
                   validator: (value) => value!.isEmpty ? "Required" : null,
-                  key: Key('beneficial_use_field'), // Add this
                 ),
                 SizedBox(height: 16),
                 TextFormField(
@@ -342,24 +334,26 @@ class _SurveyPageState extends State<SurveyPage> {
                   keyboardType: TextInputType.emailAddress,
                   validator:
                       (value) =>
-                          value!.isEmpty || !value.contains('@') || !value.contains('.')
+                          value!.isEmpty ||
+                                  !value.contains('@') ||
+                                  !value.contains('.')
                               ? "Valid email required"
                               : null,
-                  key: Key('email_field'),
                 ),
                 SizedBox(height: 20),
                 _isLoading
                     ? Center(child: CircularProgressIndicator())
-                    : ElevatedButton(
+                    : _showSendButton
+                    ? ElevatedButton(
                       onPressed: _submitSurvey,
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: 16.0),
                         minimumSize: Size(double.infinity, 50),
-                        backgroundColor: Colors.blue, // Added for consistency
+                        backgroundColor: Colors.blue,
                       ),
                       child: Text("Submit Survey"),
-                      key: Key('submit_button'),
-                    ),
+                    )
+                    : SizedBox.shrink(),
               ],
             ),
           ),
