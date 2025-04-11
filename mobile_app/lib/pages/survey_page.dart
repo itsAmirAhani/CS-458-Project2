@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import "../config.dart";
 
 class SurveyPage extends StatefulWidget {
   const SurveyPage({super.key});
@@ -21,19 +22,19 @@ class _SurveyPageState extends State<SurveyPage> {
   final TextEditingController _beneficialUseController =
       TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-
+  final int _beneficialUseMaxLength = 150;
   // Form state
   DateTime? _birthDate;
   String? _gender;
-  List<String> _availableAIModels = [
+  final List<String> _availableAIModels = [
     'ChatGPT',
     'Bard',
     'Gemini',
     'Claude',
     'DeepSeek',
   ];
-  List<String> _selectedAIModels = [];
-  Map<String, String> _defects = {};
+  final List<String> _selectedAIModels = [];
+  final Map<String, String> _defects = {};
   String? _selectedEducationLevel; // Add this to state
 
   final List<String> _educationLevels = [
@@ -131,7 +132,7 @@ class _SurveyPageState extends State<SurveyPage> {
 
         // Send the request
         final response = await http.post(
-          Uri.parse('http://10.0.2.2:8000/api/survey'), // Emulator-friendly URL
+          Uri.parse('$baseUrl/survey'),
           headers: {'Content-Type': 'application/json'},
           body: json.encode(payload),
         );
@@ -312,7 +313,18 @@ class _SurveyPageState extends State<SurveyPage> {
                 SizedBox(height: 16),
                 TextFormField(
                   controller: _beneficialUseController,
-                  decoration: InputDecoration(labelText: "Beneficial Use"),
+                  decoration: InputDecoration(
+                    labelText: "Beneficial AI Use",
+                    helperText:
+                        "${_beneficialUseMaxLength - _beneficialUseController.text.length} characters remaining",
+                    counterText:
+                        "", // hides default Flutter counter at the bottom
+                  ),
+                  maxLength: _beneficialUseMaxLength,
+                  maxLines: null, // allow multiline
+                  onChanged: (_) {
+                    setState(() {}); // trigger rebuild to update helperText
+                  },
                   validator: (value) => value!.isEmpty ? "Required" : null,
                 ),
                 SizedBox(height: 16),
@@ -322,7 +334,7 @@ class _SurveyPageState extends State<SurveyPage> {
                   keyboardType: TextInputType.emailAddress,
                   validator:
                       (value) =>
-                          value!.isEmpty || !value.contains('@')
+                          value!.isEmpty || !value.contains('@') || !value.contains('.')
                               ? "Valid email required"
                               : null,
                 ),
