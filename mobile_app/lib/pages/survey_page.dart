@@ -23,14 +23,32 @@ class _SurveyPageState extends State<SurveyPage> {
   final TextEditingController _beneficialUseController =
       TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _aiModelsController = TextEditingController();
+  //final TextEditingController _aiModelsController = TextEditingController();
   final TextEditingController _defectKeyController = TextEditingController();
   final TextEditingController _defectValueController = TextEditingController();
 
   // Form state
   DateTime? _birthDate;
   String? _gender;
+  List<String> _availableAIModels = [
+    'ChatGPT',
+    'Bard',
+    'Gemini',
+    'Claude',
+    'DeepSeek',
+  ];
+  List<String> _selectedAIModels = [];
   Map<String, String> _defects = {};
+  String? _selectedEducationLevel; // Add this to state
+
+  final List<String> _educationLevels = [
+    'Primary School',
+    'Middle School',
+    'High School',
+    'Undergraduate',
+    'Postgraduate',
+    'PhD',
+  ];
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -86,15 +104,10 @@ class _SurveyPageState extends State<SurveyPage> {
         final payload = {
           'name_surname': _nameSurnameController.text,
           'birth_date': DateFormat('yyyy-MM-dd').format(_birthDate!),
-          'education_level': _educationLevelController.text,
+          'education_level': _selectedEducationLevel,
           'city': _cityController.text,
           'gender': _gender,
-          'ai_models':
-              _aiModelsController.text
-                  .split(',')
-                  .map((e) => e.trim())
-                  .where((e) => e.isNotEmpty)
-                  .toList(),
+          'ai_models': _selectedAIModels,
           'defects': _defects,
           'beneficial_use': _beneficialUseController.text,
           'email': _emailController.text,
@@ -180,11 +193,26 @@ class _SurveyPageState extends State<SurveyPage> {
                   ),
                 ),
                 SizedBox(height: 16),
-                TextFormField(
-                  controller: _educationLevelController,
+                DropdownButtonFormField<String>(
+                  value: _selectedEducationLevel,
+                  items:
+                      _educationLevels.map((level) {
+                        return DropdownMenuItem<String>(
+                          value: level,
+                          child: Text(level),
+                        );
+                      }).toList(),
+                  onChanged: (val) {
+                    setState(() {
+                      _selectedEducationLevel = val;
+                    });
+                  },
                   decoration: InputDecoration(labelText: "Education Level"),
-                  validator: (value) => value!.isEmpty ? "Required" : null,
+                  validator:
+                      (value) =>
+                          value == null || value.isEmpty ? "Required" : null,
                 ),
+
                 SizedBox(height: 16),
                 TextFormField(
                   controller: _cityController,
@@ -210,38 +238,58 @@ class _SurveyPageState extends State<SurveyPage> {
                   ],
                 ),
                 SizedBox(height: 16),
-                TextFormField(
-                  controller: _aiModelsController,
-                  decoration: InputDecoration(
-                    labelText: "AI Models (comma-separated)",
-                    hintText: "e.g., chatGPT, DeepSeek",
-                  ),
-                  validator: (value) => value!.isEmpty ? "Required" : null,
+                Text("Select AI Models", style: TextStyle(fontSize: 16)),
+                Wrap(
+                  spacing: 8.0,
+                  children:
+                      _availableAIModels.map((model) {
+                        return FilterChip(
+                          label: Text(model),
+                          selected: _selectedAIModels.contains(model),
+                          onSelected: (selected) {
+                            setState(() {
+                              if (selected) {
+                                _selectedAIModels.add(model);
+                                _defects.putIfAbsent(model, () => "");
+                              } else {
+                                _selectedAIModels.remove(model);
+                                _defects.remove(model);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
                 ),
+
                 SizedBox(height: 16),
                 Text("Defects", style: TextStyle(fontSize: 16)),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: _defectKeyController,
-                        decoration: InputDecoration(labelText: "Defect Key"),
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: TextFormField(
-                        controller: _defectValueController,
-                        decoration: InputDecoration(labelText: "Defect Value"),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: _addDefect,
-                  child: Text("Add Defect"),
-                ),
+                if (_selectedAIModels.isNotEmpty)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children:
+                        _selectedAIModels.map((model) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                labelText: "$model - Defect/Cons",
+                              ),
+                              initialValue: _defects[model],
+                              onChanged: (val) {
+                                setState(() {
+                                  _defects[model] = val;
+                                });
+                              },
+                              validator:
+                                  (val) =>
+                                      val == null || val.isEmpty
+                                          ? "Enter a defect for $model"
+                                          : null,
+                            ),
+                          );
+                        }).toList(),
+                  ),
+
                 SizedBox(height: 8),
                 Text(
                   _defects.isEmpty
