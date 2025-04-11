@@ -12,10 +12,10 @@ class GoogleLoginComponent extends StatelessWidget {
 
   Future<void> handleGoogleLogin(BuildContext context) async {
     try {
-      final GoogleSignInAccount? googleUser  = await _googleSignIn.signIn();
-      if (googleUser  != null) {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser != null) {
         Fluttertoast.showToast(
-          msg: "✅ Welcome, ${googleUser .displayName}!",
+          msg: "✅ Welcome, ${googleUser.displayName}!",
           toastLength: Toast.LENGTH_SHORT,
         );
         onSuccess();
@@ -61,6 +61,7 @@ class GoogleLoginComponent extends StatelessWidget {
           ),
         ],
       ),
+      key: Key('google_login_button'),
     );
   }
 }

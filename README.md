@@ -53,6 +53,7 @@ CS-458-PROJECT-2/
 │   ├── linux/                  # Linux-specific files
 │   ├── macos/                  # macOS-specific files
 │   ├── test/                   # Test files
+│   ├── tests/                  # Appium test automation files
 │   ├── web/                    # Web-specific files
 │   ├── windows/                # Windows-specific files
 │   ├── .flutter-plugins        # Flutter plugins file
