@@ -197,13 +197,20 @@ class _SurveyPageState extends State<SurveyPage> {
                 ),
                 SizedBox(height: 16),
                 GestureDetector(
+                  key: const Key(
+                    "birth_date_field",
+                  ), // Add a key for Flutter-specific locators
                   onTap: () => _selectDate(context),
-                  child: InputDecorator(
-                    decoration: InputDecoration(labelText: "Birth Date"),
-                    child: Text(
-                      _birthDate == null
-                          ? "Select date"
-                          : DateFormat('yyyy-MM-dd').format(_birthDate!),
+                  child: Semantics(
+                    label:
+                        "Birth Date Field", // This maps to content-desc in Appium
+                    child: InputDecorator(
+                      decoration: InputDecoration(labelText: "Birth Date"),
+                      child: Text(
+                        _birthDate == null
+                            ? "Select date"
+                            : DateFormat('yyyy-MM-dd').format(_birthDate!),
+                      ),
                     ),
                   ),
                 ),

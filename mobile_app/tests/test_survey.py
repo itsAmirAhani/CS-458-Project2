@@ -52,6 +52,7 @@ def test_login():
         )
         print("Email field found successfully using XPath")
         email_field.clear()
+        time.sleep(1)
         email_field.click()
         email_field.send_keys("lupin@hogwarts.com")
         print("Email entered: lupin@hogwarts.com")
@@ -62,24 +63,16 @@ def test_login():
         )
         print("Password field found successfully using XPath")
         password_field.clear()
+        time.sleep(1)
         password_field.click()
         password_field.send_keys("eatCh0klate")
         print("Password entered: eatCh0klate")
 
-        # Debug: Print all buttons on the screen
-        print("Available buttons on the screen:")
-        buttons = driver.find_elements(AppiumBy.XPATH, "//android.widget.Button")
-        if buttons:
-            for i, button in enumerate(buttons, 1):
-                text = button.get_attribute("text") or "N/A"
-                print(f"Button {i}: text='{text}'")
-        else:
-            print("No buttons found with class 'android.widget.Button'")
-
-        # Locate and click the login button using positional locator
-        login_button = WebDriverWait(driver, 20).until(
-            EC.presence_of_element_located((AppiumBy.ACCESSIBILITY_ID, "Login Button"))
+        # Locate and click the login button using XPath by its visible text "Login"
+        login_button = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((AppiumBy.XPATH, "//*[contains(@content-desc, 'Login Button')]"))
         )
+
         print("Login button found successfully using positional XPath")
         login_button.click()
         print("Login button clicked") # flutter build apk
@@ -92,6 +85,80 @@ def test_login():
         toast_text = toast.get_attribute("text")
         assert "Login successful!" in toast_text, f"Expected 'Login successful!' but got '{toast_text}'"
         print("Login successful! Toast message: ", toast_text)
+
+        #Locate and fill the Name & Surname field
+        name_surname_field = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((AppiumBy.XPATH, "(//android.widget.EditText)[1]"))
+        )
+        print("Name & Surname field found successfully using XPath")
+        name_surname_field.clear()
+        name_surname_field.click()
+        name_surname_field.send_keys("John Doe")
+        print("Name & Surname entered: John Doe")
+
+        # Locate and tap the Birth Date field to open the date picker
+        birth_date_field = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((AppiumBy.XPATH, "//*[contains(@content-desc, 'Birth Date')]"))
+        )
+        print("Birth Date field found successfully using XPath")
+        birth_date_field.click()
+        print("Birth Date field tapped to open date picker")
+
+        # Wait for the date picker dialog to appear
+        time.sleep(10)
+        
+        # Locate and click the pencil button to switch to manual entry
+        pencil_button = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((AppiumBy.XPATH, "//*[contains(@content-desc, 'fieldLabelText')]"))
+        )
+        print("Pencil button found successfully")
+        pencil_button.click()
+        print("Pencil button clicked to switch to manual entry")
+        # Set the year (e.g., 1990)
+        year_field = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((AppiumBy.XPATH, "//*[contains(@content-desc, 'year')]"))
+        )
+        print("Year is about to set to 1990")
+        year_field.send_keys("1990")
+        print("Year set to 1990")
+
+        # Wait for the date picker dialog to appear
+        time.sleep(2)
+
+        # Set the month (e.g., May)
+        month_field = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((AppiumBy.XPATH, "//*[contains(@content-desc, 'Month')]"))
+        )
+        print("Month is about to set to May")
+        month_field.send_keys("May")
+        print("Month set to May")
+
+        # Wait for the date picker dialog to appear
+        time.sleep(2)
+
+        # Set the day (e.g., 15)
+        day_field = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((AppiumBy.XPATH, "//*[contains(@content-desc, 'day')]"))
+        )
+        print("Day is about to set to 15")
+        day_field.send_keys("15")
+        print("Day set to 15")
+
+        # Wait for the date picker dialog to appear
+        time.sleep(2)
+
+        # Click the OK button to confirm
+        ok_button = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((AppiumBy.XPATH, "//android.widget.Button[@text='OK']"))
+        )
+        ok_button.click()
+        print("Date picker OK button clicked")
+
+        # Verify the birth date is set
+        birth_date_display = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((AppiumBy.XPATH, "//android.widget.TextView[@text='1990-05-15']"))
+        )
+        print("Birth Date set successfully: 1990-05-15")
 
     except Exception as e:
         print(f"Test Failed: {str(e)}")
