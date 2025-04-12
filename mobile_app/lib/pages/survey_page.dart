@@ -21,7 +21,9 @@ class _SurveyPageState extends State<SurveyPage> {
   final TextEditingController _beneficialUseController =
       TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-
+  final TextEditingController _dayController = TextEditingController();
+  final TextEditingController _monthController = TextEditingController();
+  final TextEditingController _yearController = TextEditingController();
   final int _beneficialUseMaxLength = 150;
 
   DateTime? _birthDate;
@@ -55,6 +57,21 @@ class _SurveyPageState extends State<SurveyPage> {
     _cityController.addListener(_checkFieldsFilled);
     _beneficialUseController.addListener(_checkFieldsFilled);
     _emailController.addListener(_checkFieldsFilled);
+    _dayController.addListener(_validateBirthDateFields);
+    _monthController.addListener(_validateBirthDateFields);
+    _yearController.addListener(_validateBirthDateFields);
+  }
+
+  @override
+  void dispose() {
+    _nameSurnameController.dispose();
+    _cityController.dispose();
+    _beneficialUseController.dispose();
+    _emailController.dispose();
+    _dayController.dispose();
+    _monthController.dispose();
+    _yearController.dispose();
+    super.dispose();
   }
 
   void _checkFieldsFilled() {
@@ -76,40 +93,42 @@ class _SurveyPageState extends State<SurveyPage> {
     });
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now().subtract(Duration(days: 365 * 20)),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null) {
-      final today = DateTime.now();
-      final age =
-          today.year -
-          picked.year -
-          ((today.month < picked.month ||
-                  (today.month == picked.month && today.day < picked.day))
-              ? 1
-              : 0);
+  void _validateBirthDateFields() {
+    int? day = int.tryParse(_dayController.text);
+    int? month = int.tryParse(_monthController.text);
+    int? year = int.tryParse(_yearController.text);
 
-      if (age > 120 || age < 6) {
-        Fluttertoast.showToast(
-          msg:
-              age > 120
-                  ? "Age exceeds valid range (120 years max)."
-                  : "You must be at least 6 years old to participate.",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-        );
-        return;
+    DateTime? tempDate;
+    if (day != null && month != null && year != null) {
+      try {
+        tempDate = DateTime(year, month, day);
+        final now = DateTime.now();
+        int age =
+            now.year -
+            tempDate.year -
+            ((now.month < tempDate.month) ||
+                    (now.month == tempDate.month && now.day < tempDate.day)
+                ? 1
+                : 0);
+
+        if (age < 6 ||
+            age > 120 ||
+            day < 1 ||
+            day > 31 ||
+            month < 1 ||
+            month > 12) {
+          tempDate = null;
+        }
+      } catch (_) {
+        tempDate = null;
       }
-
-      setState(() {
-        _birthDate = picked;
-      });
-      _checkFieldsFilled();
     }
+
+    setState(() {
+      _birthDate = tempDate;
+    });
+
+    _checkFieldsFilled();
   }
 
   Future<void> _submitSurvey() async {
@@ -118,7 +137,7 @@ class _SurveyPageState extends State<SurveyPage> {
         Fluttertoast.showToast(
           msg:
               _birthDate == null
-                  ? "Please select a birth date"
+                  ? "Please select a valid birth date"
                   : "Please select a gender",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
@@ -196,17 +215,57 @@ class _SurveyPageState extends State<SurveyPage> {
                   validator: (value) => value!.isEmpty ? "Required" : null,
                 ),
                 SizedBox(height: 16),
-                GestureDetector(
-                  onTap: () => _selectDate(context),
-                  child: InputDecorator(
-                    decoration: InputDecoration(labelText: "Birth Date"),
+                Text("Birth Date (DD/MM/YYYY)", style: TextStyle(fontSize: 16)),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _dayController,
+                        maxLength: 2,
+                        decoration: InputDecoration(
+                          labelText: "Day",
+                          counterText: '',
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _monthController,
+                        maxLength: 2,
+                        decoration: InputDecoration(
+                          labelText: "Month",
+                          counterText: '',
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _yearController,
+                        maxLength: 4,
+                        decoration: InputDecoration(
+                          labelText: "Year",
+                          counterText: '',
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                  ],
+                ),
+                if (_birthDate == null &&
+                    _dayController.text.isNotEmpty &&
+                    _monthController.text.isNotEmpty &&
+                    _yearController.text.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
-                      _birthDate == null
-                          ? "Select date"
-                          : DateFormat('yyyy-MM-dd').format(_birthDate!),
+                      "Please enter a valid date between ages 6 and 120.",
+                      style: TextStyle(color: Colors.red, fontSize: 12),
                     ),
                   ),
-                ),
                 SizedBox(height: 16),
                 DropdownButtonFormField<String>(
                   value: _selectedEducationLevel,
