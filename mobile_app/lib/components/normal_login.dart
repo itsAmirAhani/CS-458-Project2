@@ -131,18 +131,21 @@ class _NormalLoginState extends State<NormalLogin> {
                 widget.loading
                     ? null
                     : () async {
-                      await handleSubmit(); // Call handleSubmit directly
+                      await handleSubmit();
                     },
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 16.0),
               backgroundColor: Colors.blue,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0),
-              ), // Button color
+              ),
             ),
-            child: Text(
-              widget.loading ? "Logging in..." : "Login",
-              style: TextStyle(fontSize: 16),
+            child: Semantics(
+              label: 'Login Button',
+              child: Text(
+                widget.loading ? "Logging in..." : "Login",
+                style: TextStyle(fontSize: 16),
+              ),
             ),
             key: Key('login_button'),
           ),

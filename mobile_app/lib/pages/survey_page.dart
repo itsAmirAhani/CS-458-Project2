@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import '../config.dart';
 
 class SurveyPage extends StatefulWidget {
   const SurveyPage({super.key});
@@ -131,7 +132,7 @@ class _SurveyPageState extends State<SurveyPage> {
 
         // Send the request
         final response = await http.post(
-          Uri.parse('http://10.0.2.2:8000/api/survey'), // Emulator-friendly URL
+          Uri.parse('$baseUrl/survey'),
           headers: {'Content-Type': 'application/json'},
           body: json.encode(payload),
         );
@@ -278,7 +279,7 @@ class _SurveyPageState extends State<SurveyPage> {
                           },
                         );
                       }).toList(),
-                      key: Key('ai_models_field')
+                  key: Key('ai_models_field'),
                 ),
 
                 SizedBox(height: 16),

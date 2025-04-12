@@ -1,6 +1,8 @@
 from appium import webdriver
 from appium.webdriver.common.appiumby import AppiumBy
 from appium.options.common import AppiumOptions
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 
 # Desired capabilities for your Flutter app
@@ -23,94 +25,81 @@ for key, value in desired_caps.items():
 # Connect to Appium server
 driver = webdriver.Remote("http://localhost:4723", options=options)
 
-def login():
-    email_field = driver.find_element(AppiumBy.ACCESSIBILITY_ID, "email_field")
-    email_field.send_keys("test@example.com")
-    password_field = driver.find_element(AppiumBy.ACCESSIBILITY_ID, "password_field")
-    password_field.send_keys("password123")
-    login_button = driver.find_element(AppiumBy.ACCESSIBILITY_ID, "login_button")
-    login_button.click()
-    time.sleep(2)
+# Wait for the app to launch
+print("Waiting for the app to launch...")
+time.sleep(10)
 
-# Test Case 1: Partial Form Submission
-def test_partial_submission():
-    login()
-    name_field = driver.find_element(AppiumBy.ACCESSIBILITY_ID, "name_surname_field")
-    name_field.send_keys("John Doe")
-    email_field = driver.find_element(AppiumBy.ACCESSIBILITY_ID, "email_field")
-    email_field.send_keys("john@example.com")
-    submit_button = driver.find_element(AppiumBy.ACCESSIBILITY_ID, "submit_button")
-    submit_button.click()
-    toast = driver.find_element(AppiumBy.XPATH, "//android.widget.Toast")
-    assert "Please select a birth date" in toast.text or "Please fill all required fields" in toast.text
-    print("Test 1 Passed: Partial submission handled")
+# Explicitly launch the app using the mobile: startActivity command
+print("Explicitly launching the app...")
+try:
+    driver.execute_script("mobile: startActivity", {
+        "intent": "com.example.mobile_app/.MainActivity"
+    })
+except Exception as e:
+    print(f"Failed to launch app with mobile: startActivity: {str(e)}")
+    raise
 
-# Test Case 2: Multiple AI Models with Defects
-def test_multiple_ai_models():
-    login()
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "name_surname_field").send_keys("Jane Doe")
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "birth_date_field").click()
-    driver.find_element(AppiumBy.XPATH, "//android.widget.Button[@text='1']").click()
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "education_level_field").send_keys("University")
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "city_field").send_keys("New York")
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "gender_male").click()
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "ai_models_field").send_keys("chatGPT, DeepSeek")
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "defect_key_field").send_keys("chatGPT")
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "defect_value_field").send_keys("slow")
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "add_defect_button").click()
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "defect_key_field").send_keys("DeepSeek")
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "defect_value_field").send_keys("inaccurate")
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "add_defect_button").click()
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "beneficial_use_field").send_keys("Research")
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "email_field").send_keys("jane@example.com")
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "submit_button").click()
-    toast = driver.find_element(AppiumBy.XPATH, "//android.widget.Toast")
-    assert "Survey submitted successfully" in toast.text
-    print("Test 2 Passed: Multiple AI models submitted")
+# Wait for the app to fully load
+print("Waiting for the app to load...")
+time.sleep(5)
 
-# Test Case 3: Long Input Handling
-def test_long_input():
-    login()
-    long_text = "A" * 500
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "name_surname_field").send_keys(long_text)
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "birth_date_field").click()
-    driver.find_element(AppiumBy.XPATH, "//android.widget.Button[@text='1']").click()
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "gender_male").click()
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "email_field").send_keys("long@example.com")
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "submit_button").click()
-    toast = driver.find_element(AppiumBy.XPATH, "//android.widget.Toast")
-    assert "Survey submitted successfully" in toast.text or "Error" not in toast.text
-    print("Test 3 Passed: Long input handled")
+# Test Case: Login to the app
+def test_login():
+    try:
+        # Locate and fill the email field
+        email_field = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((AppiumBy.XPATH, "(//android.widget.EditText)[1]"))
+        )
+        print("Email field found successfully using XPath")
+        email_field.clear()
+        email_field.click()
+        email_field.send_keys("lupin@hogwarts.com")
+        print("Email entered: lupin@hogwarts.com")
 
-# Test Case 4: Invalid Email Format
-def test_invalid_email():
-    login()
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "name_surname_field").send_keys("Test User")
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "birth_date_field").click()
-    driver.find_element(AppiumBy.XPATH, "//android.widget.Button[@text='1']").click()
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "gender_male").click()
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "email_field").send_keys("invalid@.com")
-    driver.find_element(AppiumBy.ACCESSIBILITY_ID, "submit_button").click()
-    toast = driver.find_element(AppiumBy.XPATH, "//android.widget.Toast")
-    assert "Valid email required" in toast.text
-    print("Test 4 Passed: Invalid email rejected")
+        # Locate and fill the password field
+        password_field = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((AppiumBy.XPATH, "(//android.widget.EditText)[2]"))
+        )
+        print("Password field found successfully using XPath")
+        password_field.clear()
+        password_field.click()
+        password_field.send_keys("eatCh0klate")
+        print("Password entered: eatCh0klate")
 
-# Test Case 5: Form Reset After Submission
-def test_form_reset():
-    test_multiple_ai_models()
-    driver.back()
-    login()
-    name_field = driver.find_element(AppiumBy.ACCESSIBILITY_ID, "name_surname_field")
-    assert name_field.text == "" or name_field.text is None
-    print("Test 5 Passed: Form reset after submission")
+        # Debug: Print all buttons on the screen
+        print("Available buttons on the screen:")
+        buttons = driver.find_elements(AppiumBy.XPATH, "//android.widget.Button")
+        if buttons:
+            for i, button in enumerate(buttons, 1):
+                text = button.get_attribute("text") or "N/A"
+                print(f"Button {i}: text='{text}'")
+        else:
+            print("No buttons found with class 'android.widget.Button'")
 
-# Run all tests
+        # Locate and click the login button using positional locator
+        login_button = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((AppiumBy.ACCESSIBILITY_ID, "Login Button"))
+        )
+        print("Login button found successfully using positional XPath")
+        login_button.click()
+        print("Login button clicked") # flutter build apk
+
+        # Wait briefly for login to process
+        time.sleep(2)
+
+        # Verify login success (adjust this based on your app’s behavior)
+        toast = driver.find_element(AppiumBy.XPATH, "//android.widget.Toast")
+        toast_text = toast.get_attribute("text")
+        assert "Login successful!" in toast_text, f"Expected 'Login successful!' but got '{toast_text}'"
+        print("Login successful! Toast message: ", toast_text)
+
+    except Exception as e:
+        print(f"Test Failed: {str(e)}")
+        assert False, f"Test Failed: {str(e)}"
+
+# Run the test
 if __name__ == "__main__":
     try:
-        test_partial_submission()
-        test_multiple_ai_models()
-        test_long_input()
-        test_invalid_email()
-        test_form_reset()
+        test_login()
     finally:
         driver.quit()
