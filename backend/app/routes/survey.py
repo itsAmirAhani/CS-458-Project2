@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from app.models.SurveyRequest import SurveyRequest
 from app.managers.SurveyManager import SurveyManager
 
-router = APIRouter(prefix="/api", tags=["survey"])
+router = APIRouter()
 
 @router.post("/survey")
 async def submit_survey(survey_request: SurveyRequest):
