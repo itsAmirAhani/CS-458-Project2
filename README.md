@@ -96,6 +96,13 @@ python -m uvicorn app.main:app --host 0.0.0.0 --reload
 - The FastAPI server will run at **http://0.0.0.0:8000**.
 - Open **http://localhost:8000/docs** to view the API documentation.
 
+Verify the API:
+Open your browser and go to http://localhost:8000/docs to view the interactive API documentation (Swagger UI).
+Test endpoints like /login and /survey to ensure the backend is working.
+Troubleshooting
+If the server fails to start, ensure all dependencies are installed correctly and there are no port conflicts (e.g., port 8000 is already in use).
+Check the terminal output for error messages, such as missing dependencies or database issues.
+
 ---
 ### **2️⃣ Mobile App (Flutter)**
 #### **Setup**
@@ -107,17 +114,98 @@ python -m uvicorn app.main:app --host 0.0.0.0 --reload
    ```bash
    flutter pub get
    ```
+3. **Update the API Base URL**:
+   Open the file mobile_app/lib/config.dart.
+   Find the baseUrl variable, which might look like:
+   ```bash
+   const String baseUrl = "http://127.0.0.1:8000";
+   ```
+   Replace 127.0.0.1 with your machine’s IPv4 address (e.g., 192.168.1.100). To find your IPv4 address:
+   Windows: Run ipconfig in Command Prompt and look for IPv4 Address.
+   macOS/Linux: Run ifconfig or ip addr and look for your network interface’s IP.
+   Example updated config.dart
+   ```bash
+   const String baseUrl = "http://192.168.1.100:8000";
+   ```
 
 #### **Run the Flutter App**
+1. Ensure an emulator is running or a physical device is connected:
+```bash
+flutter devices
+```
+This will list available devices (e.g., emulator-5554).
+
+2. Start the Flutter app:
 ```bash
 flutter run
 ```
-- If using an **Android emulator/iOS simulator**, update the API URL in `lib/main.dart` to match your local machine's IP.
 
----
+#### **Automated Testing with Appium**
+The project includes Appium test scripts in the mobile_app/tests/ directory to automate testing of the login and survey submission features.
+
+Prerequisites
+Appium Server: Install Appium globally using npm:
+
+```bash
+npm install -g appium
+```
+Appium UIAutomator2 Driver: Install the Android driver:
+
+```bash
+appium driver install uiautomator2
+```
+
+Python 3.9+: Ensure Python is installed.
+Appium Python Client: Install the Appium Python client library:
+
+```bash
+pip install Appium-Python-Client
+```
+Android Emulator: Ensure an emulator (e.g., emulator-5554) is running.
+Flutter App APK: The test scripts use the debug APK located at mobile_app/build/app/outputs/flutter-apk/app-debug.apk.
+
+Setup
+1. Start the Appium Server:
+Run the Appium server in a terminal:
+
+```bash
+appium
+```
+
+2. The server will start on http://localhost:4723 by default.
+Ensure no other processes are using port 4723.
+Start the Android Emulator:
+Open Android Studio, go to AVD Manager, and start the emulator (e.g., emulator-5554).
+Verify the emulator is running:
+
+```bash
+adb devices
+```
+
+3. Ensure the Backend is Running:
+Follow the backend setup instructions above to start the FastAPI server.
+Update mobile_app/lib/config.dart with your IPv4 address (as described in the Flutter setup).
+
+**Run the Appium Tests**:
+
+1. Navigate to the tests directory:
+```bash
+cd CS-458-Project2/mobile_app/tests
+```
+2. Run the test scripts:
+The project includes two test scripts: test1.py and test2.py.
+Run test1.py (which tests login and survey submission):
+
+```bash
+python test1.py
+```
+
 ## 📌 Notes
 - Ensure **FastAPI is running before starting Flutter** so the app can fetch data.
 - If running on a mobile device/emulator, replace `127.0.0.1` with your local IP.
 
-Let me know if you need any modifications! 🚀
+**🛠️ Development Tips** 
+- Backend Debugging: Use the /docs endpoint (http://localhost:8000/docs) to test API endpoints manually.
+- Flutter Debugging: Use flutter logs to view app logs during development.
+- Appium Debugging: Add debug statements in the test scripts to print element attributes (e.g., content-desc, text) to verify locators.
 
