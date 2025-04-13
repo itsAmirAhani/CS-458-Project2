@@ -45,6 +45,7 @@ class _NormalLoginState extends State<NormalLogin> {
   }
 
   Future<void> login(String email, String password) async {
+    print('Base URL: $baseUrl');
     final url = Uri.parse('$baseUrl/login'); // Use the base URL from config
 
     final response = await http.post(

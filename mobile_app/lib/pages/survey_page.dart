@@ -297,22 +297,28 @@ class _SurveyPageState extends State<SurveyPage> {
                 Text("Gender", style: TextStyle(fontSize: 16)),
                 Row(
                   children: [
-                    Radio<String>(
-                      value: "male",
-                      groupValue: _gender,
-                      onChanged: (value) {
-                        setState(() => _gender = value);
-                        _checkFieldsFilled();
-                      },
+                    Semantics(
+                      label: "MaleRadio",
+                      child: Radio<String>(
+                        value: "male",
+                        groupValue: _gender,
+                        onChanged: (value) {
+                          setState(() => _gender = value);
+                          _checkFieldsFilled();
+                        },
+                      ),
                     ),
                     Text("Male"),
-                    Radio<String>(
-                      value: "female",
-                      groupValue: _gender,
-                      onChanged: (value) {
-                        setState(() => _gender = value);
-                        _checkFieldsFilled();
-                      },
+                    Semantics(
+                      label: "FemaleRadio",
+                      child: Radio<String>(
+                        value: "female",
+                        groupValue: _gender,
+                        onChanged: (value) {
+                          setState(() => _gender = value);
+                          _checkFieldsFilled();
+                        },
+                      ),
                     ),
                     Text("Female"),
                   ],
@@ -371,34 +377,44 @@ class _SurveyPageState extends State<SurveyPage> {
                         }).toList(),
                   ),
                 SizedBox(height: 16),
-                TextFormField(
-                  controller: _beneficialUseController,
-                  decoration: InputDecoration(
-                    labelText: "Beneficial AI Use",
-                    helperText:
-                        "${_beneficialUseMaxLength - _beneficialUseController.text.length} characters remaining",
-                    counterText: "",
+                Semantics(
+                  value:
+                      "BeneficialAIUse", // Use value instead of label to set content-desc
+                  textField: true, // Indicate this is a text field
+                  child: TextFormField(
+                    controller: _beneficialUseController,
+                    decoration: InputDecoration(
+                      labelText: "Beneficial AI Use",
+                      helperText:
+                          "${_beneficialUseMaxLength - _beneficialUseController.text.length} characters remaining",
+                      counterText: "",
+                    ),
+                    maxLength: _beneficialUseMaxLength,
+                    maxLines: null,
+                    onChanged:
+                        (_) => setState(() {
+                          _checkFieldsFilled();
+                        }),
+                    validator: (value) => value!.isEmpty ? "Required" : null,
                   ),
-                  maxLength: _beneficialUseMaxLength,
-                  maxLines: null,
-                  onChanged:
-                      (_) => setState(() {
-                        _checkFieldsFilled();
-                      }),
-                  validator: (value) => value!.isEmpty ? "Required" : null,
                 ),
                 SizedBox(height: 16),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(labelText: "Email"),
-                  keyboardType: TextInputType.emailAddress,
-                  validator:
-                      (value) =>
-                          value!.isEmpty ||
-                                  !value.contains('@') ||
-                                  !value.contains('.')
-                              ? "Valid email required"
-                              : null,
+                Semantics(
+                  value:
+                      "Email", // Use value instead of label to set content-desc
+                  textField: true, // Indicate this is a text field
+                  child: TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(labelText: "Email"),
+                    keyboardType: TextInputType.emailAddress,
+                    validator:
+                        (value) =>
+                            value!.isEmpty ||
+                                    !value.contains('@') ||
+                                    !value.contains('.')
+                                ? "Valid email required"
+                                : null,
+                  ),
                 ),
                 SizedBox(height: 20),
                 _isLoading
