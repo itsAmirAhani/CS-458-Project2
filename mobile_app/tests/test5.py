@@ -235,186 +235,6 @@ def test_login():
         driver.press_keycode(4)
         print("Back button pressed to dismiss keyboard")
         time.sleep(1)
-        
-        # Click the Bard chip
-        bard_chip = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((AppiumBy.XPATH, "//*[contains(@content-desc, 'Bard')]"))
-        )
-        print("Bard chip found successfully using content-desc")
-        bard_chip.click()
-        print("Bard chip clicked")
-        
-        # Debug: Print all EditText elements
-        time.sleep(2)  # Increase wait to ensure Bard field renders
-        all_elements = driver.find_elements(AppiumBy.XPATH, "//android.widget.EditText")
-        
-        # Find the ChatGPT defect field (already filled)
-        chatgpt_index = -1
-        for i, element in enumerate(all_elements):
-            if element.get_attribute("text") == "Sometimes gives inaccurate answers":
-                chatgpt_index = i
-                break
-            
-        # The Bard defect field should be the next empty EditText after ChatGPT
-        bard_defect_field = None
-        for i in range(chatgpt_index + 1, len(all_elements)):
-            element = all_elements[i]
-            if element.get_attribute("text") in ["", "N/A"]:
-                bard_defect_field = element
-                print(f"Bard defect field found at index {i}")
-                break
-            
-        if bard_defect_field:
-            # Scroll to ensure the field is visible
-            driver.execute_script("mobile: scroll", {"strategy": "accessibility id", "selector": "Select AI Models"})
-            time.sleep(1)
-        
-            bard_defect_field.clear()
-            bard_defect_field.click()
-            bard_defect_field.send_keys("Limited knowledge base")
-            print("Bard defect set to: Limited knowledge base")
-        else:
-            print("Bard defect field not found")
-        
-        # Dismiss the keyboard
-        driver.press_keycode(4)
-        print("Back button pressed to dismiss keyboard")
-        time.sleep(1)
-        
-        # Click the Gemini chip
-        gemini_chip = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((AppiumBy.XPATH, "//*[contains(@content-desc, 'Gemini')]"))
-        )
-        print("Gemini chip found successfully using content-desc")
-        gemini_chip.click()
-        print("Gemini chip clicked")
-        
-        # Debug: Print all EditText elements
-        time.sleep(2)  # Increase wait to ensure Gemini field renders
-        all_elements = driver.find_elements(AppiumBy.XPATH, "//android.widget.EditText")
-        
-        # Find the Bard defect field (already filled)
-        bard_index = -1
-        for i, element in enumerate(all_elements):
-            if element.get_attribute("text") == "Limited knowledge base":
-                bard_index = i
-                break
-            
-        # The Gemini defect field should be the next empty EditText after Bard
-        gemini_defect_field = None
-        for i in range(bard_index + 1, len(all_elements)):
-            element = all_elements[i]
-            if element.get_attribute("text") in ["", "N/A"]:
-                gemini_defect_field = element
-                print(f"Gemini defect field found at index {i}")
-                break
-            
-        if gemini_defect_field:
-            # Scroll to ensure the field is visible
-            driver.execute_script("mobile: scroll", {"strategy": "accessibility id", "selector": "Select AI Models"})
-            time.sleep(1)
-        
-            gemini_defect_field.clear()
-            gemini_defect_field.click()
-            gemini_defect_field.send_keys("Can be slow to respond")
-            print("Gemini defect set to: Can be slow to respond")
-        else:
-            print("Gemini defect field not found")
-        
-        # Dismiss the keyboard
-        driver.press_keycode(4)
-        print("Back button pressed to dismiss keyboard")
-        time.sleep(1)
-        
-        # Click the Claude chip
-        claude_chip = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((AppiumBy.XPATH, "//*[contains(@content-desc, 'Claude')]"))
-        )
-        print("Claude chip found successfully using content-desc")
-        claude_chip.click()
-        print("Claude chip clicked")
-        
-        # Debug: Print all EditText elements
-        time.sleep(2) 
-        all_elements = driver.find_elements(AppiumBy.XPATH, "//android.widget.EditText")
-        
-        # Find the Gemini defect field (already filled)
-        gemini_index = -1
-        for i, element in enumerate(all_elements):
-            if element.get_attribute("text") == "Can be slow to respond":
-                gemini_index = i
-                break
-            
-        # The Claude defect field should be the next empty EditText after Gemini
-        claude_defect_field = None
-        for i in range(gemini_index + 1, len(all_elements)):
-            element = all_elements[i]
-            if element.get_attribute("text") in ["", "N/A"]:
-                claude_defect_field = element
-                print(f"Claude defect field found at index {i}")
-                break
-            
-        if claude_defect_field:
-            # Scroll to ensure the field is visible
-            driver.execute_script("mobile: scroll", {"strategy": "accessibility id", "selector": "Select AI Models"})
-            time.sleep(1)
-        
-            claude_defect_field.clear()
-            claude_defect_field.click()
-            claude_defect_field.send_keys("Struggles with complex queries")
-            print("Claude defect set to: Struggles with complex queries")
-        else:
-            print("Claude defect field not found")
-        
-        # Dismiss the keyboard
-        driver.press_keycode(4)
-        print("Back button pressed to dismiss keyboard")
-        time.sleep(1)
-        
-        # Click the DeepSeek chip
-        deepseek_chip = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((AppiumBy.XPATH, "//*[contains(@content-desc, 'DeepSeek')]"))
-        )
-        print("DeepSeek chip found successfully using content-desc")
-        deepseek_chip.click()
-        print("DeepSeek chip clicked")
-        
-        # Debug: Print all EditText elements
-        time.sleep(2)  # Increase wait to ensure DeepSeek field renders
-        all_elements = driver.find_elements(AppiumBy.XPATH, "//android.widget.EditText")
-        
-        # Find the Claude defect field (already filled)
-        claude_index = -1
-        for i, element in enumerate(all_elements):
-            if element.get_attribute("text") == "Struggles with complex queries":
-                claude_index = i
-                break
-            
-        # The DeepSeek defect field should be the next empty EditText after Claude
-        deepseek_defect_field = None
-        for i in range(claude_index + 1, len(all_elements)):
-            element = all_elements[i]
-            if element.get_attribute("text") in ["", "N/A"]:
-                deepseek_defect_field = element
-                print(f"DeepSeek defect field found at index {i}")
-                break
-            
-        if deepseek_defect_field:
-            # Scroll to ensure the field is visible
-            driver.execute_script("mobile: scroll", {"strategy": "accessibility id", "selector": "Select AI Models"})
-            time.sleep(1)
-        
-            deepseek_defect_field.clear()
-            deepseek_defect_field.click()
-            deepseek_defect_field.send_keys("Lacks contextual understanding")
-            print("DeepSeek defect set to: Lacks contextual understanding")
-        else:
-            print("DeepSeek defect field not found")
-        
-        # Dismiss the keyboard
-        driver.press_keycode(4)
-        print("Back button pressed to dismiss keyboard")
-        time.sleep(1)
 
         # Locate the Beneficial AI Use field using content-desc
         beneficial_ai_field = WebDriverWait(driver, 10).until(
@@ -423,7 +243,16 @@ def test_login():
         print("Beneficial AI Use field found using content-desc")
         beneficial_ai_field.clear()
         beneficial_ai_field.click()
-        beneficial_ai_field.send_keys("Automating repetitive tasks")
+        beneficial_ai_field.send_keys("Automating repetitive tasks " \
+        "Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks " \
+        "Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks " \
+        "Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks " \
+        "Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks " \
+        "Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks " \
+        "Automating repetitive tasks ")
+
+        print("it wont allow me to enter more than 150 characters, so I will just enter the same text multiple times")
+        time.sleep(3)
         print("Beneficial AI Use set to: Automating repetitive tasks")
 
         # Dismiss the keyboard
@@ -439,11 +268,10 @@ def test_login():
         email_field.clear()
         email_field.click()
         email_field.send_keys("ahmed.haikal@ug.bilkent.edu.tr")
-        print("Email set to: ahmed.haikal@ug.bilkent.edu.tr")
 
         # Dismiss the keyboard
         driver.press_keycode(4)
-        print("Back button pressed to dismiss keyboard")    
+        print("Back button pressed to dismiss keyboard")
         time.sleep(1)
 
         # Locate the Submit Survey button using its text
