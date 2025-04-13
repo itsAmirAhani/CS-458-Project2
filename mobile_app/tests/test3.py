@@ -262,8 +262,12 @@ def test_login():
         print("Email set to: ahmed.haikal won't be submitted cause it is missing @ sign")
 
         time.sleep(4)
+        email_field.clear()
 
-        email_field.send_keys("@ug.bilkent.edu.tr")
+        time.sleep(4)
+
+
+        email_field.send_keys("ahmed.haikal@ug.bilkent.edu.tr")
 
         # Dismiss the keyboard
         driver.press_keycode(4)
