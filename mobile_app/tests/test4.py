@@ -282,6 +282,13 @@ def test_login():
         submit_button.click()
         print("Submit Survey button clicked")
 
+        time.sleep(4)
+
+        # Terminate the app
+        driver.terminate_app("com.example.mobile_app")
+        print("App terminated successfully")
+
+
     except Exception as e:
         print(f"Test Failed: {str(e)}")
         assert False, f"Test Failed: {str(e)}"

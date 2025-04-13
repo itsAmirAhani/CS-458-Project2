@@ -115,8 +115,8 @@ def test_login():
         print("Day field found successfully using XPath")
         day_field.clear()
         day_field.click()
-        day_field.send_keys("15")
-        print("Day set to 15")
+        day_field.send_keys("01")
+        print("Day set to 01")
 
         # Locate and fill the Month field
         month_field = WebDriverWait(driver, 20).until(
@@ -125,8 +125,8 @@ def test_login():
         print("Month field found successfully using XPath")
         month_field.clear()
         month_field.click()
-        month_field.send_keys("05")
-        print("Month set to 05")
+        month_field.send_keys("01")
+        print("Month set to 01")
 
         # Locate and fill the Year field
         year_field = WebDriverWait(driver, 20).until(
@@ -135,7 +135,99 @@ def test_login():
         print("Year field found successfully using XPath")
         year_field.clear()
         year_field.click()
+        year_field.send_keys("2022")
+        print("Year set to 2022")
+
+
+        time.sleep(5)
+
+        
+        time.sleep(1)
+        day_field.clear()
+        day_field.click()
+        day_field.send_keys("01")
+        print("Day set to 01")
+
+        time.sleep(1)
+        month_field.clear()
+        month_field.click()
+        month_field.send_keys("01")
+        print("Month set to 01")
+
+    
+        # Locate and fill the Year field
+        year_field = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((AppiumBy.XPATH, "(//android.widget.EditText)[4][@text='2022']"))
+        )
+        time.sleep(1)
+        year_field.click()
+        year_field.clear()
+        time.sleep(3)
+        year_field.send_keys("1900")
+        time.sleep(3)
+        print("Year set to 1900")
+
+
+        time.sleep(1)
+        day_field.clear()
+        day_field.click()
+        day_field.send_keys("01")
+        print("Day set to 01")
+
+        time.sleep(1)
+        month_field.clear()
+        month_field.click()
+        month_field.send_keys("01")
+        print("Month set to 01")
+
+    
+        # Locate and fill the Year field
+        year_field = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((AppiumBy.XPATH, "(//android.widget.EditText)[4][@text='1900']"))
+        )
+        time.sleep(1)
+        year_field.click()
+        year_field.clear()
+        time.sleep(3)
+        year_field.send_keys("2026")
+        time.sleep(3)
+        print("Year set to 2026")
+
+        # Locate and fill the Day field
+        day_field = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((AppiumBy.XPATH, "(//android.widget.EditText)[2][@text='01']"))
+        )
+        time.sleep(1)
+        day_field.click()
+        day_field.clear()
+        time.sleep(3)
+        day_field.send_keys("15")
+        time.sleep(3)
+        print("Day set to 15")
+
+        # Locate and fill the Month field
+        month_field = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((AppiumBy.XPATH, "(//android.widget.EditText)[3][@text='01']"))
+        )
+        time.sleep(1)
+        month_field.click()
+        month_field.clear()
+        time.sleep(3)
+        month_field.send_keys("05")
+        time.sleep(3)
+        print("Month set to 05")
+
+        time.sleep(3)
+        # Locate and fill the Year field
+        year_field = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((AppiumBy.XPATH, "(//android.widget.EditText)[4][@text='2026']"))
+        )
+        time.sleep(1)
+        year_field.click()
+        year_field.clear()
+        time.sleep(3)
         year_field.send_keys("1990")
+        time.sleep(3)
         print("Year set to 1990")
 
         # Verify the birth date fields
@@ -148,6 +240,7 @@ def test_login():
         year_field_verify = WebDriverWait(driver, 20).until(
             EC.presence_of_element_located((AppiumBy.XPATH, "(//android.widget.EditText)[4][@text='1990']"))
         )
+
         print("Birth Date set successfully: 15/05/1990")
 
         # Locate the Education Level dropdown (Spinner)
@@ -243,16 +336,7 @@ def test_login():
         print("Beneficial AI Use field found using content-desc")
         beneficial_ai_field.clear()
         beneficial_ai_field.click()
-        beneficial_ai_field.send_keys("Automating repetitive tasks " \
-        "Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks " \
-        "Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks " \
-        "Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks " \
-        "Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks " \
-        "Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks Automating repetitive tasks " \
-        "Automating repetitive tasks ")
-
-        print("it wont allow me to enter more than 150 characters, so I will just enter the same text multiple times")
-        time.sleep(3)
+        beneficial_ai_field.send_keys("Automating repetitive tasks")
         print("Beneficial AI Use set to: Automating repetitive tasks")
 
         # Dismiss the keyboard
@@ -287,6 +371,7 @@ def test_login():
         # Terminate the app
         driver.terminate_app("com.example.mobile_app")
         print("App terminated successfully")
+
 
     except Exception as e:
         print(f"Test Failed: {str(e)}")

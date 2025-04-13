@@ -269,7 +269,13 @@ def test_login():
         print("Submit Survey button found using content-desc")
         submit_button.click()
         print("Submit Survey button clicked")
-        time.sleep(2)  # Wait to see if the app crashes after clicking
+
+        time.sleep(4)
+
+        # Terminate the app
+        driver.terminate_app("com.example.mobile_app")
+        print("App terminated successfully")
+
 
     except Exception as e:
         print(f"Test Failed: {str(e)}")
